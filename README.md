@@ -74,4 +74,6 @@ Before using solver behavior on hardware:
 
 Copyright (c) 2026 Limnmedia LLC.
 
-No open-source license has been applied yet. All rights are reserved unless a license is added later.
+This Blender add-on is licensed under the GNU General Public License, version 3 or later (`GPL-3.0-or-later`), in keeping with Blender add-on distribution expectations for Python code that integrates with Blender's `bpy` API.
+
+See `LICENSE.md` for details.
