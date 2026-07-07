@@ -64,6 +64,9 @@ classes = (
 def register():
     print("[REGISTER] LIMNMOCO CG Rig v0.3.2 Beta")
     print("[REGISTER] Starting")
+    from .debug.install_check import print_install_check
+
+    print_install_check(__name__, __file__, bl_info, bpy)
 
     for cls in classes:
         print("[REGISTER] Registering:", cls.__name__)

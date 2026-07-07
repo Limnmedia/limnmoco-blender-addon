@@ -12,7 +12,13 @@ ADDON_MODULE = "LIMNMOCO_CG_RIG"
 
 
 def sorted_files(source_dir: Path) -> List[Path]:
-    files = [path for path in source_dir.rglob("*") if path.is_file()]
+    files = [
+        path
+        for path in source_dir.rglob("*")
+        if path.is_file()
+        and "__pycache__" not in path.parts
+        and path.suffix not in {".pyc", ".pyo"}
+    ]
     return sorted(files, key=lambda path: sort_key(path.relative_to(source_dir)))
 
 
