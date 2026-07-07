@@ -148,10 +148,7 @@ def ensure_control(col):
 
 def make_label_empty(name, loc, col, label_offset):
     """
-    Create a small offset label empty.
-
-    The real object stays at the true solved coordinate.
-    The label is offset for readability.
+    Labels are intentionally disabled for the beta viewport.
     """
 
     return None
@@ -190,14 +187,6 @@ def make_sphere(
 
     apply_color_to_mesh(obj, color)
     link_to_collection(obj, col)
-
-    if False:
-        make_label_empty(
-            name,
-            loc,
-            col,
-            label_offset,
-        )
 
     return obj
 
@@ -277,14 +266,6 @@ def make_cube_marker(
     apply_color_to_mesh(obj, color)
     link_to_collection(obj, col)
 
-    if False:
-        make_label_empty(
-            name,
-            loc,
-            col,
-            label_offset,
-        )
-
     return obj
 
 
@@ -326,14 +307,6 @@ def make_ring_marker(
     apply_color_to_mesh(obj, color)
     link_to_collection(obj, col)
 
-    if False:
-        make_label_empty(
-            name,
-            loc,
-            col,
-            label_offset,
-        )
-
     return obj
 
 # ============================================================
@@ -357,7 +330,7 @@ def draw_limmoco_crane_result(result, col, show_labels=False):
     # --------------------------------------------------------
 
     make_ring_marker(
-        "TARGET",
+        "PT_TARGET",
         result.target,
         major_radius=0.36,
         minor_radius=0.025,
@@ -368,7 +341,7 @@ def draw_limmoco_crane_result(result, col, show_labels=False):
     )
 
     make_sphere(
-        "BASE - BOOM/SWING PIVOT ",
+        "PT_BASE_BOOM_SWING_PIVOT",
         result.base,
         0.28,
         col,
@@ -378,7 +351,7 @@ def draw_limmoco_crane_result(result, col, show_labels=False):
     )
 
     make_sphere(
-        "ArmTip",
+        "PT_ARM_TIP",
         result.arm_tip,
         0.14,
         col,
@@ -388,7 +361,7 @@ def draw_limmoco_crane_result(result, col, show_labels=False):
     )
 
     make_cube_marker(
-        "PAN Center CUBE",
+        "PT_PAN_CENTER",
         result.pan_center,
         size=0.22,
         col=col,
@@ -398,7 +371,7 @@ def draw_limmoco_crane_result(result, col, show_labels=False):
     )
 
     make_sphere(
-        "Camera Nodal SPHERE",
+        "PT_CAMERA_NODAL",
         result.nodal,
         0.06,
         col,
@@ -412,7 +385,7 @@ def draw_limmoco_crane_result(result, col, show_labels=False):
     # --------------------------------------------------------
 
     make_line(
-        "BOOM Parallelogram",
+        "LN_BOOM_PARALLELOGRAM",
         result.base,
         result.arm_tip,
         col,
@@ -421,7 +394,7 @@ def draw_limmoco_crane_result(result, col, show_labels=False):
     )
     
     make_line(
-        "CRANE_LevelExtension",
+        "LN_LEVEL_EXTENSION",
         result.arm_tip,
         result.pan_center,
         col,
@@ -431,7 +404,7 @@ def draw_limmoco_crane_result(result, col, show_labels=False):
 
 
     make_line(
-        "CameraOffset PanCenter to Nodal",
+        "LN_CAMERA_OFFSET_PAN_CENTER_TO_NODAL",
         result.pan_center,
         result.nodal,
         col,
@@ -440,7 +413,7 @@ def draw_limmoco_crane_result(result, col, show_labels=False):
     )
 
     make_line(
-        "Error Nodal to Target",
+        "LN_ERROR_NODAL_TO_TARGET",
         result.nodal,
         result.target,
         col,
@@ -453,7 +426,7 @@ def draw_limmoco_crane_result(result, col, show_labels=False):
     # --------------------------------------------------------
 
     make_line(
-        "AXIS: (X) vEW",
+        "LN_AXIS_X_VEW",
         Vector((-10, 0, 0)),
         Vector((10, 0, 0)),
         col,
@@ -462,7 +435,7 @@ def draw_limmoco_crane_result(result, col, show_labels=False):
     )
 
     make_line(
-        "AXIS (Y) vTRACK",
+        "LN_AXIS_Y_VTRACK",
         Vector((0, -10, 0)),
         Vector((0, 10, 0)),
         col,
@@ -471,7 +444,7 @@ def draw_limmoco_crane_result(result, col, show_labels=False):
     )
 
     make_line(
-        "AXIS (Z) vNS",
+        "LN_AXIS_Z_VHEIGHT",
         Vector((0, 0, 0)),
         Vector((0, 0, 10)),
         col,

@@ -1,13 +1,13 @@
 print("")
 print("===================================================")
-print("LIMNMOCO CG RIG v0.2.9 BETA - REFERENCE SOLVER BUILD")
+print("LIMNMOCO CG RIG v0.3.1 BETA - ARCHITECTURE PASS")
 print("===================================================")
 print("")
 
 bl_info = {
     "name": "LIMNMOCO CG Rig Beta",
     "author": "LIMNMEDIA / Christopher Weinberg",
-    "version": (0, 2, 9),
+    "version": (0, 3, 1),
     "blender": (4, 0, 0),
     "location": "View3D > Sidebar > LIMNMOCO",
     "description": "Beta reference solver and previz tool for the LIMNMOCO Swing-Boom-Track crane CG rig.",
@@ -49,7 +49,7 @@ classes = (
 
 
 def register():
-    print("[REGISTER] LIMNMOCO CG Rig v0.2.9 Beta")
+    print("[REGISTER] LIMNMOCO CG Rig v0.3.1 Beta")
     print("[REGISTER] Starting")
 
     for cls in classes:

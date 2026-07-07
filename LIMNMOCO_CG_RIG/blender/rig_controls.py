@@ -1,8 +1,6 @@
 import math
 
 import bpy
-
-from ..core.transforms import blender_camera_rotation_from_virtual_matrix
 from ..debug.log import scene
 
 
@@ -57,16 +55,16 @@ def ensure_rig_controls(root, cam, col):
 def set_local_transform(obj, location=(0, 0, 0), rotation=(0, 0, 0)):
     obj.location = location
     obj.rotation_euler = rotation
+    obj.scale = (1, 1, 1)
 
 
 def drive_rig_controls(controls, cam, result, props):
     """
     Drive persistent rig controls from the solver result.
 
-    Track, swing, boom, extension, and nodal offset are represented in
-    the parented control chain. The camera keeps the final solved
-    Blender orientation so it remains visually correct while the rig
-    hierarchy carries the mechanical solve.
+    Track, swing, boom, extension, pan, tilt, roll, and nodal offset are
+    represented in the parented control chain. The camera follows that
+    hierarchy instead of being assigned a solved world transform.
     """
 
     scene("drive_rig_controls()")
@@ -89,6 +87,7 @@ def drive_rig_controls(controls, cam, result, props):
     set_local_transform(
         controls["LIMN_EXTENSION_CTRL"],
         location=(0, props.boom_length, 0),
+        rotation=(-boom_rad, 0, 0),
     )
     set_local_transform(
         controls["LIMN_PAN_CTRL"],
@@ -104,50 +103,28 @@ def drive_rig_controls(controls, cam, result, props):
         rotation=(0, math.radians(props.vroll), 0),
     )
 
-    camera_rotation = blender_camera_rotation_from_virtual_matrix(
-        result.rotation
+    set_local_transform(
+        cam,
+        location=(props.offset_x, props.offset_y, props.offset_z),
+        rotation=(math.radians(90), 0, 0),
     )
-    camera_world = camera_rotation.to_4x4()
-    camera_world.translation = result.nodal
-    cam.matrix_world = camera_world
 
 
-def parent_keep_world(obj, parent):
+def parent_to_rig_local(obj, parent):
     if obj is None or parent is None or obj == parent:
         return
 
     obj.parent = parent
-    obj.matrix_parent_inverse = parent.matrix_world.inverted()
 
 
 def parent_generated_visuals(col, root, controls):
     """
-    Parent disposable visualization objects under the relevant rig controls.
-    """
+    Parent disposable visualization objects under the rig root.
 
-    layer_parents = (
-        ("CRANE_MECH_TrackRail", controls["LIMN_TRACK_CTRL"]),
-        ("CRANE_MECH_BaseCarriage", controls["LIMN_TRACK_CTRL"]),
-        ("CRANE_MECH_SwingColumn", controls["LIMN_SWING_CTRL"]),
-        ("CRANE_MECH_BoomArm", controls["LIMN_BOOM_CTRL"]),
-        ("CRANE_MECH_ExtensionArm", controls["LIMN_EXTENSION_CTRL"]),
-        ("CRANE_MECH_PanHead", controls["LIMN_PAN_CTRL"]),
-        ("CRANE_MECH_CameraBlock", controls["LIMN_ROLL_CTRL"]),
-        ("CRANE_MECH_PanHead_to_CameraBlock", controls["LIMN_PAN_CTRL"]),
-        ("CAM_", controls["LIMN_ROLL_CTRL"]),
-        ("RANGE_", root),
-        ("ENVELOPE_", root),
-        ("TARGET", root),
-        ("BASE", controls["LIMN_TRACK_CTRL"]),
-        ("ArmTip", controls["LIMN_BOOM_CTRL"]),
-        ("PAN Center", controls["LIMN_PAN_CTRL"]),
-        ("Camera Nodal", controls["LIMN_ROLL_CTRL"]),
-        ("BOOM", controls["LIMN_BOOM_CTRL"]),
-        ("CRANE_LevelExtension", controls["LIMN_EXTENSION_CTRL"]),
-        ("CameraOffset", controls["LIMN_PAN_CTRL"]),
-        ("Error", root),
-        ("AXIS", root),
-    )
+    Generated visual objects are drawn in rig-local coordinates. Keeping
+    them under the root makes LIMNMOCO_RIG_ROOT the scene placement
+    object without making the visuals authoritative.
+    """
 
     persistent = {root.name, "LIMN_CONTROL", "LIMN_CAMERA"}
     persistent.update(ctrl.name for ctrl in controls.values())
@@ -156,11 +133,4 @@ def parent_generated_visuals(col, root, controls):
         if obj.name in persistent:
             continue
 
-        parent = root
-
-        for prefix, target_parent in layer_parents:
-            if obj.name.startswith(prefix):
-                parent = target_parent
-                break
-
-        parent_keep_world(obj, parent)
+        parent_to_rig_local(obj, root)

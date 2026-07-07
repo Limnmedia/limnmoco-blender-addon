@@ -1,7 +1,6 @@
 import bpy
 from mathutils import Vector
 
-from ..core.transforms import blender_camera_rotation_from_virtual_matrix
 from ..debug.log import scene
 from .objects import make_line
 
@@ -36,37 +35,6 @@ def ensure_camera(col):
 
     bpy.context.scene.camera = cam
     return cam
-
-
-def apply_camera_transform(cam, result):
-    """
-    Move and rotate the Blender camera from the solved rig result.
-
-    LIMNMOCO virtual convention:
-        +Y = camera forward
-        +Z = camera up
-        +X = camera right
-
-    Blender camera convention:
-        local -Z = camera forward
-        local +Y = camera up
-
-    The correction lives in:
-        core/transforms.py
-    """
-
-    scene("apply_camera_transform()")
-    scene("Camera location:", result.nodal)
-
-    cam.location = result.nodal
-
-    blender_rotation = blender_camera_rotation_from_virtual_matrix(
-        result.rotation
-    )
-
-    cam.rotation_euler = blender_rotation.to_euler()
-
-    scene("Camera rotation:", cam.rotation_euler)
 
 
 def draw_camera_axes(result, col):

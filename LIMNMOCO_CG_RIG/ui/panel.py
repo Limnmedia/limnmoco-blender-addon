@@ -58,13 +58,8 @@ class LIMNMOCO_PT_ViewPanel(bpy.types.Panel):
         p = get_control_props(context)
 
         if p is None:
-            layout.operator("limnmoco.update_rig", text="Build LIMNMOCO Rig")
+            layout.label(text="Build rig first.")
             return
-
-        live_box = layout.box()
-        live_box.prop(p, "live_update")
-        live_text = "Live Update: ON" if p.live_update else "Live Update: OFF"
-        live_box.operator("limnmoco.toggle_live_update", text=live_text)
 
         layout.prop(p, "show_solver_geometry")
         layout.prop(p, "show_physical_crane")
@@ -72,7 +67,6 @@ class LIMNMOCO_PT_ViewPanel(bpy.types.Panel):
         layout.prop(p, "show_camera_axis_planes")
         layout.prop(p, "show_range_guides")
         layout.prop(p, "show_motion_envelope")
-        layout.prop(p, "show_envelope_point_cloud")
 
 
 class LIMNMOCO_PT_SolverPanel(bpy.types.Panel):
@@ -88,7 +82,7 @@ class LIMNMOCO_PT_SolverPanel(bpy.types.Panel):
         p = get_control_props(context)
 
         if p is None:
-            layout.operator("limnmoco.update_rig", text="Build LIMNMOCO Rig")
+            layout.label(text="Build rig first.")
             return
 
         box = layout.box()
@@ -124,7 +118,7 @@ class LIMNMOCO_PT_CranePanel(bpy.types.Panel):
         p = get_control_props(context)
 
         if p is None:
-            layout.operator("limnmoco.update_rig", text="Build LIMNMOCO Rig")
+            layout.label(text="Build rig first.")
             return
 
         box = layout.box()
@@ -166,7 +160,7 @@ class LIMNMOCO_PT_PrevizPanel(bpy.types.Panel):
         p = get_control_props(context)
 
         if p is None:
-            layout.operator("limnmoco.update_rig", text="Build LIMNMOCO Rig")
+            layout.label(text="Build rig first.")
             return
 
         layout.operator("limnmoco.send_to_zero", text="Zero Out")

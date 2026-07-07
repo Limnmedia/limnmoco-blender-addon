@@ -115,7 +115,6 @@ def update_rig(select_control=True):
 
     p = control.limnmoco
 
-    clear_generated(col)
     print("[UPDATE] Beginning Solve")
 
     result = solve_selected_rig(p)
@@ -148,6 +147,8 @@ def update_rig(select_control=True):
     print("[UPDATE] Solve Complete")
     drive_rig_controls(controls, cam, result, p)
 
+    clear_generated(col)
+
     if p.show_solver_geometry:
         draw_limmoco_crane_result(result, col, show_labels=False)
 
@@ -157,12 +158,12 @@ def update_rig(select_control=True):
     if p.show_range_guides:
         draw_range_guides(result, p, col)
 
-    if p.show_motion_envelope or p.show_envelope_point_cloud:
+    if p.show_motion_envelope:
         draw_reach_envelope(
             result,
             p,
             col,
-            show_points=p.show_envelope_point_cloud,
+            show_points=False,
         )
 
     if p.show_camera_axes:
@@ -191,11 +192,6 @@ class LIMNMOCO_OT_UpdateRig(bpy.types.Operator):
 
     def execute(self, context):
         update_rig()
-        control = bpy.data.objects.get("LIMN_CONTROL")
-
-        if control is not None and hasattr(control, "limnmoco"):
-            control.limnmoco.live_update = True
-
         self.report({"INFO"}, "LIMNMOCO CG Rig updated")
         return {"FINISHED"}
 
@@ -261,6 +257,5 @@ class LIMNMOCO_OT_RebuildRig(bpy.types.Operator):
         reset_object_transform(root)
         reset_collection()
         update_rig()
-        control.limnmoco.live_update = True
         self.report({"INFO"}, "LIMNMOCO CG Rig reset and rebuilt")
         return {"FINISHED"}
