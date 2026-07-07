@@ -1,13 +1,13 @@
 print("")
 print("===================================================")
-print("LIMNMOCO CG RIG v0.3.1 BETA - ARCHITECTURE PASS")
+print("LIMNMOCO CG RIG v0.3.2 BETA - ARCHITECTURE PASS")
 print("===================================================")
 print("")
 
 bl_info = {
     "name": "LIMNMOCO CG Rig Beta",
     "author": "LIMNMEDIA / Christopher Weinberg",
-    "version": (0, 3, 1),
+    "version": (0, 3, 2),
     "blender": (4, 0, 0),
     "location": "View3D > Sidebar > LIMNMOCO",
     "description": "Beta reference solver and previz tool for the LIMNMOCO Swing-Boom-Track crane CG rig.",
@@ -17,7 +17,20 @@ bl_info = {
 }
 
 import bpy
+import sys
+from pathlib import Path
 from bpy.props import PointerProperty
+
+if not __package__:
+    _addon_dir = Path(__file__).resolve().parent
+    _addon_parent = str(_addon_dir.parent)
+
+    if _addon_parent not in sys.path:
+        sys.path.insert(0, _addon_parent)
+
+    __package__ = "LIMNMOCO_CG_RIG"
+    __path__ = [str(_addon_dir)]
+    sys.modules.setdefault(__package__, sys.modules[__name__])
 
 from .ui.properties import LIMNMOCOProperties
 from .ui.operators import (
@@ -49,7 +62,7 @@ classes = (
 
 
 def register():
-    print("[REGISTER] LIMNMOCO CG Rig v0.3.1 Beta")
+    print("[REGISTER] LIMNMOCO CG Rig v0.3.2 Beta")
     print("[REGISTER] Starting")
 
     for cls in classes:

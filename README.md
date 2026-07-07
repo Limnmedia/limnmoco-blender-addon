@@ -77,7 +77,7 @@ The current source represents the following axis conventions directly:
 1. Open Blender 4.x.
 2. Go to `Edit > Preferences > Add-ons`.
 3. Choose `Install...`.
-4. Select `releases/LIMNMOCO_CG_RIG_v0.3.1-beta.zip`.
+4. Select `releases/LIMNMOCO_CG_RIG_v0.3.2-beta.zip`.
 5. Enable `LIMNMOCO CG Rig`.
 6. Open the 3D View sidebar and use the `LIMNMOCO` tab.
 
@@ -93,7 +93,7 @@ LIMNMOCO_CG_RIG/
 docs/
   ik-reference.md
 releases/
-  LIMNMOCO_CG_RIG_v0.3.1-beta.zip
+  LIMNMOCO_CG_RIG_v0.3.2-beta.zip
 ```
 
 ## Solver Reference
@@ -125,7 +125,7 @@ Before using solver behavior on hardware:
 
 Additional notes:
 
-- The add-on is labeled in source as `v0.3.1` beta.
+- The add-on is labeled in source as `v0.3.2` beta.
 - Only the `LIMNMOCO Crane` rig model is currently exposed in the UI.
 - Range guides are visual aids; they do not physically constrain or clamp the rig.
 - Limit status is reported in the UI when solved Track, Swing, or Boom values fall outside configured display limits.
