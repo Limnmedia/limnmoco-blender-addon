@@ -114,7 +114,7 @@ def make_empty(name, loc, col, display="PLAIN_AXES", size=0.6):
     obj.location = loc
     obj.empty_display_type = display
     obj.empty_display_size = size
-    obj.show_name = True
+    obj.show_name = False
 
     col.objects.link(obj)
     return obj
@@ -142,7 +142,7 @@ def ensure_control(col):
     elif control.name not in col.objects:
         col.objects.link(control)
 
-    control.show_name = True
+    control.show_name = False
     return control
 
 
@@ -154,16 +154,7 @@ def make_label_empty(name, loc, col, label_offset):
     The label is offset for readability.
     """
 
-    print("[OBJECTS_V3] make_label_empty:", name, label_offset)
-
-    label = bpy.data.objects.new(f"{name}_LABEL", None)
-    label.location = loc + label_offset
-    label.empty_display_type = "PLAIN_AXES"
-    label.empty_display_size = 0.01
-    label.show_name = True
-
-    col.objects.link(label)
-    return label
+    return None
 
 
 def make_sphere(
@@ -173,6 +164,7 @@ def make_sphere(
     col,
     label_offset=None,
     color=LIMN_GRAY,
+    show_label=False,
 ):
     """
     Create a colored debug sphere.
@@ -195,17 +187,17 @@ def make_sphere(
 
     obj = bpy.context.object
     obj.name = name
-    obj.show_name = False
 
     apply_color_to_mesh(obj, color)
     link_to_collection(obj, col)
 
-    make_label_empty(
-        name,
-        loc,
-        col,
-        label_offset,
-    )
+    if False:
+        make_label_empty(
+            name,
+            loc,
+            col,
+            label_offset,
+        )
 
     return obj
 
@@ -241,7 +233,7 @@ def make_line(
     spline.points[1].co = (b.x, b.y, b.z, 1)
 
     obj = bpy.data.objects.new(name, curve)
-    obj.show_name = True
+    obj.show_name = False
 
     apply_color_to_curve(obj, curve, color)
 
@@ -258,6 +250,7 @@ def make_cube_marker(
     col,
     label_offset=None,
     color=LIMN_BLUE,
+    show_label=False,
 ):
     """
     Create a cube marker at an exact solved point.
@@ -284,12 +277,13 @@ def make_cube_marker(
     apply_color_to_mesh(obj, color)
     link_to_collection(obj, col)
 
-    make_label_empty(
-        name,
-        loc,
-        col,
-        label_offset,
-    )
+    if False:
+        make_label_empty(
+            name,
+            loc,
+            col,
+            label_offset,
+        )
 
     return obj
 
@@ -302,6 +296,7 @@ def make_ring_marker(
     col,
     label_offset=None,
     color=LIMN_PURPLE,
+    show_label=False,
 ):
     """
     Create a torus/ring marker at an exact solved point.
@@ -331,12 +326,13 @@ def make_ring_marker(
     apply_color_to_mesh(obj, color)
     link_to_collection(obj, col)
 
-    make_label_empty(
-        name,
-        loc,
-        col,
-        label_offset,
-    )
+    if False:
+        make_label_empty(
+            name,
+            loc,
+            col,
+            label_offset,
+        )
 
     return obj
 
@@ -344,7 +340,7 @@ def make_ring_marker(
 # LIMNMOCO DEBUG RESULT DRAWING
 # ============================================================
 
-def draw_limmoco_crane_result(result, col):
+def draw_limmoco_crane_result(result, col, show_labels=False):
     """
     Draw minimal solver/debug visualization.
 
@@ -368,6 +364,7 @@ def draw_limmoco_crane_result(result, col):
         col=col,
         label_offset=Vector((0.30, 0.30, 0.30)),
         color=LIMN_PURPLE,
+        show_label=show_labels,
     )
 
     make_sphere(
@@ -377,6 +374,7 @@ def draw_limmoco_crane_result(result, col):
         col,
         label_offset=Vector((0.30, 0.30, 1.30)),
         color=LIMN_BLACK,
+        show_label=show_labels,
     )
 
     make_sphere(
@@ -386,6 +384,7 @@ def draw_limmoco_crane_result(result, col):
         col,
         label_offset=Vector((0.30, -0.30, 1.30)),
         color=LIMN_RED,
+        show_label=show_labels,
     )
 
     make_cube_marker(
@@ -395,6 +394,7 @@ def draw_limmoco_crane_result(result, col):
         col=col,
         label_offset=Vector((-0.30, 0.30, 0.45)),
         color=LIMN_BLUE,
+        show_label=show_labels,
     )
 
     make_sphere(
@@ -404,6 +404,7 @@ def draw_limmoco_crane_result(result, col):
         col,
         label_offset=Vector((0.00, 0.00, 0.70)),
         color=LIMN_YELLOW,
+        show_label=show_labels,
     )
 
     # --------------------------------------------------------

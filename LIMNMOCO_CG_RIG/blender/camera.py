@@ -27,7 +27,7 @@ def ensure_camera(col):
 
         cam_data = bpy.data.cameras.new("LIMN_CAMERA_DATA")
         cam = bpy.data.objects.new("LIMN_CAMERA", cam_data)
-        cam.show_name = True
+        cam.show_name = False
         col.objects.link(cam)
 
     elif cam.name not in col.objects:
