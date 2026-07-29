@@ -245,17 +245,28 @@ def make_hex_ring(name, collection, parent, outer_radius, inner_radius, depth, o
     return ring
 
 
-def make_disc(name, collection, parent, radius, thickness, color):
-    """Create a solid circular disc with its face normals along local Y."""
+def make_disc(name, collection, parent, radius, thickness, color, normal_axis="Y"):
+    """Create a solid circular disc with a selectable local face normal."""
+    normal_axis = normal_axis.upper()
+    if normal_axis not in {"X", "Y", "Z"}:
+        raise ValueError("normal_axis must be X, Y, or Z")
+
     sides = 32
     half_depth = thickness / 2.0
     vertices = []
 
-    for y in (-half_depth, half_depth):
-        vertices.append((0.0, y, 0.0))
+    for depth in (-half_depth, half_depth):
+        center = [0.0, 0.0, 0.0]
+        center["XYZ".index(normal_axis)] = depth
+        vertices.append(tuple(center))
         for index in range(sides):
             angle = 2.0 * math.pi * index / sides
-            vertices.append((radius * math.cos(angle), y, radius * math.sin(angle)))
+            point = [0.0, 0.0, 0.0]
+            plane_axes = [axis for axis in "XYZ" if axis != normal_axis]
+            point["XYZ".index(plane_axes[0])] = radius * math.cos(angle)
+            point["XYZ".index(plane_axes[1])] = radius * math.sin(angle)
+            point["XYZ".index(normal_axis)] = depth
+            vertices.append(tuple(point))
 
     back_center = 0
     back_start = 1
@@ -487,17 +498,24 @@ def build():
 
     tilt_disc = make_disc(
         "TILT_DISC", collection, pan_disc,
-        TILT_DISC_RADIUS, TILT_DISC_THICKNESS, ORANGE,
+        TILT_DISC_RADIUS, TILT_DISC_THICKNESS, ORANGE, normal_axis="X",
     )
-    tilt_disc.matrix_world = Matrix.Rotation(math.radians(-90.0), 4, "Z")
-    tilt_disc.lock_rotation = (True, False, True)
+    # Keep the tilt control's local X aligned with the pan frame's X.  The
+    # mesh itself has an X normal, so the disc remains in the Y-Z plane.
+    tilt_disc.rotation_euler = (0.0, 0.0, 0.0)
+    # Tilt is the local-X rotation.  Keep local Y/Z locked, matching the
+    # physical tilt stage while retaining the saved pan/roll conventions.
+    tilt_disc.lock_rotation = (False, True, True)
     tilt_disc.lock_location = (True, True, True)
 
     tilt_ring = make_hex_ring(
         "TILT_HEX_RING", collection, tilt_disc,
         TILT_RING_OUTER_RADIUS, TILT_RING_INNER_RADIUS,
-        TILT_RING_DEPTH, (0.0, -TILT_DISC_TO_HEX, 0.0), PURPLE,
+        TILT_RING_DEPTH, (-TILT_DISC_TO_HEX, 0.0, 0.0), PURPLE,
     )
+    # The reusable hex mesh is built in X-Z.  Rotate this ring in its own
+    # plane so it is parallel to the tilt disc's Y-Z plane.
+    tilt_ring.rotation_euler = (0.0, 0.0, math.radians(-90.0))
     tilt_ring.lock_rotation = (True, True, True)
     tilt_ring.lock_location = (True, True, True)
 
@@ -505,7 +523,9 @@ def build():
         "ROLL_DISC", collection, tilt_disc,
         ROLL_DISC_RADIUS, ROLL_DISC_THICKNESS, CYAN,
     )
-    roll_disc.matrix_world = Matrix.Identity(4)
+    # Re-orient the nested roll stage after making tilt local-X neutral.  The
+    # resulting roll disc is still X-Z in world space and roll remains local Y.
+    roll_disc.rotation_euler = (math.radians(90.0), 0.0, 0.0)
     roll_disc.lock_rotation = (True, False, True)
     roll_disc.lock_location = (True, True, True)
 
@@ -564,7 +584,7 @@ def build():
     print("Roll ring radii:", ROLL_RING_INNER_RADIUS, ROLL_RING_OUTER_RADIUS)
     print("Tilt axis: local X")
     print("Tilt disc plane: Y-Z")
-    print("Tilt hex local offset: (0, -Y)", TILT_DISC_TO_HEX)
+    print("Tilt hex local offset: (-X, 0, 0)", TILT_DISC_TO_HEX)
     print("Tilt disc thickness:", TILT_DISC_THICKNESS)
     print("Pan axis: local Z")
     print("Pan disc plane: X-Y")
